@@ -71,6 +71,7 @@ Two words are separated by a word-space which is incoded by the absence of any
 SPACE_WORD ::= 4
 
 add_char_to_list list/List c/int -> none:
+  if 'A' <= c <= 'Z': c += 'a' - 'A'
   encoded := ITU_[c]
   MASK := 0b11
   START_PATTERN ::= 0b01

@@ -9,3 +9,6 @@ main:
 
   encoded = morse.encode_char 'o'
   expect_list_equals [morse.DASH, morse.DASH, morse.DASH] encoded
+
+  encoded = morse.encode_char 'O'
+  expect_list_equals [morse.DASH, morse.DASH, morse.DASH] encoded
