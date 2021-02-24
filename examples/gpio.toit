@@ -20,5 +20,4 @@ main:
         --dot_duration= Duration --ms=250
         --on=:  pin.set 1
         --off=: pin.set 0
-    sleep (Duration --ms=500)
-
+    sleep (Duration --ms=3000)

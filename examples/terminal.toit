@@ -15,5 +15,4 @@ main:
         --dot_duration= Duration --ms=250
         --on=:  print "$move_up$on"
         --off=: print "$move_up$off"
-    sleep (Duration --ms=500)
-
+    sleep (Duration --ms=3000)
