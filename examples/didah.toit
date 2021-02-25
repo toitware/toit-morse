@@ -18,7 +18,7 @@ main:
       if needs_dash: out_phonetic += "-"
       out_phonetic += it == morse.DOT ? "di" : "dah"
       needs_dash = true
-    else:
+    else if it != morse.SPACE_SYMBOL:
       if out_phonetic.ends_with "di":
         out_phonetic += "t"
       out_symbols += " "
@@ -31,6 +31,10 @@ main:
   if out_phonetic.ends_with "di":
     out_phonetic += "t"
 
+  // Prints: .... . .-.. .-.. ---    .-- --- .-. .-.. -..
   print out_symbols
+  // Prints (on one line):
+  //   di-di-di-dit dit di-dah-di-dit di-dah-di-dit dah-dah-dah
+  //   di-dah-dah dah-dah-dah di-dah-dit di-dah-di-dit dah-di-dit
   print out_phonetic
 

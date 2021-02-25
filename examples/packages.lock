@@ -1,5 +1,5 @@
 prefixes:
-  morse: src
+  morse: ..
 packages:
-  src:
-    path: ../src
+  ..:
+    path: ..

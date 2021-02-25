@@ -53,22 +53,33 @@ The dash duration is 3 times the duration of a dot.
 */
 DASH ::= 1
 /**
-The space between two symbols ($DOT or $DASH).
-The symbol space is equal to the dot duration.
+A space, or absence of signal, that seperates two symbols ($DOT or $DASH).
+
+This space separates two symbols ($DOT and $DASH) within a character.
+It has the same duration as a dot.
 */
 SPACE_SYMBOL ::= 2
+
 /**
-The space between two characters.
-Each character in a Morse sequence is followed by a letter-space, which is encoded
-  as the absence of any signal, equal to 3 times the dot duration.
+A space, or absence of a signal, that separates two letters.
+
+This space separates two characters (for example 'o' and 'k') within a word.
+
+It has a duration that is 3 times longer than a dot.
 */
 SPACE_LETTER ::= 3
+
 /**
-The space between two words.
-Two words are separated by a word-space which is incoded by the absence of any
-  signal for the duration of 7 dots.
+A space, or absence of a signal, that separates two words.
+
+It has a duration that is 7 times longer than a dot.
 */
 SPACE_WORD ::= 4
+
+DASH_DURATION_FACTOR_ ::= 3
+SPACE_SYMBOL_DURATION_FACTOR_   ::= 1
+SPACE_LETTER_DURATION_FACTOR_   ::= 3
+SPACE_WORD_DURATION_FACTOR_     ::= 7
 
 add_char_to_list list/List c/int -> none:
   if 'A' <= c <= 'Z': c += 'a' - 'A'
@@ -91,13 +102,13 @@ add_char_to_list list/List c/int -> none:
     else:
       assert: bits == DASH_PATTERN
       list.add DASH
+    if shift != 0: list.add SPACE_SYMBOL
     shift -= 2
 
 /**
 Converts a character to Morse code.
 
 Returns a list of $DOT (dits), $DASH (dahs).
-
 Throws if the character is not part of the international (ITU) Morse standard.
 */
 encode_char c/int -> List:
@@ -106,36 +117,33 @@ encode_char c/int -> List:
   return result
 
 /**
-Converts a character to Morse code.
+Converts a string to Morse code.
 
-Returns a list of $DOT (dits), $DASH (dahs), $SPACE_LETTER and $SPACE_WORD.
-Does not insert $SPACE_SYMBOL spaces.
-
+Words must be separated by spaces (' ').
+Returns a list of $DOT (dits), $DASH (dahs), and spaces ($SPACE_SYMBOL,
+  $SPACE_LETTER or $SPACE_WORD).
 Throws if the character is not part of the international (ITU) Morse standard.
 */
 encode_string str/string -> List:
   result := []
-  needs_letter_space := false
-  str.do:
-    if it == ' ' or it == '\n':
-      result.add SPACE_WORD
-      needs_letter_space = false
-    else:
-      if needs_letter_space:
-        result.add SPACE_LETTER
-      add_char_to_list result it
-      needs_letter_space = true
-  return result
+  words := str.split " "
+  // Drop empty words (which would mean that there consecutive spaces).
+  words.filter --in_place: it != ""
+  for i := 0; i < words.size; i++:
+    word := words[i]
+    if i != 0: result.add SPACE_WORD
+    for j := 0; j < word.size; j++:
+      c := word[j]
+      if j != 0: result.add SPACE_LETTER
+      add_char_to_list result c
 
-DASH_DURATION_FACTOR_         ::= 3
-SPACE_SYMBOL_DURATION_FACTOR_ ::= 1
-SPACE_LETTER_DURATION_FACTOR_ ::= 3
-SPACE_WORD_DURATION_FACTOR_   ::= 7
+  return result
 
 /**
 Emits the given symbol, using the $on and $off blocks.
 
-The symbol must be $DOT, $DASH, $SPACE_SYMBOL, $SPACE_LETTER, or $SPACE_WORD.
+The symbol must be $DOT, $DASH, or one of the spaces ($SPACE_SYMBOL,
+$SPACE_LETTER or $SPACE_WORD).
 
 The given $dot_duration is used as duration of $DOT.
 */
@@ -163,13 +171,15 @@ emit_symbol symbol --dot_duration/Duration [--on] [--off]:
 /**
 Emits the given string, using the $on and $off blocks.
 
-The string must only contain the characters of the latin alphabet, spaces,
-  or newlines.
-
+The string must only contain the characters of the latin alphabet or spaces.
 The given $dot_duration is used as duration of $DOT.
 */
 emit_string str/string --dot_duration/Duration [--on] [--off]:
   needed_space := null
+  // We don't split the string into words, but iterate over the characters
+  // directly. This way we only need a constant amount of memory.
+  // The handling of the spaces becomes slightly more tricky, but in return
+  // it's possible to emit very large strings from flash.
   str.do:
     if it == ' ' or it == '\n':
       needed_space = SPACE_WORD
@@ -179,6 +189,6 @@ emit_string str/string --dot_duration/Duration [--on] [--off]:
     symbols.do:
       if needed_space != null:
         emit_symbol needed_space --dot_duration=dot_duration --on=on --off=off
+        needed_space = null
       emit_symbol it --dot_duration=dot_duration --on=on --off=off
-      needed_space = SPACE_SYMBOL
     needed_space = SPACE_LETTER
