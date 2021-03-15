@@ -1,4 +1,15 @@
 // Copyright (C) 2021 Toitware ApS. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be found
+// in the LICENSE file.
+
+/**
+A library to emit Morse code.
+
+Encodes characters or string to Morse code. Also provides convenience methods
+  that call given blocks `on` and `off` with the correct timing. Developers can
+  simply connect those blocks to peripherals (LED, speakers, ...) to emit the
+  correct sequence.
+*/
 
 ITU_ ::= {
   // The code is encoded as pairs of bits.

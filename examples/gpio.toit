@@ -1,4 +1,6 @@
 // Copyright (C) 2021 Toitware ApS. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be found
+// in the LICENSE file.
 
 /**
 This example demonstrates the use of the morse package with an ESP32.
