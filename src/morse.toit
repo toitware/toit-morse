@@ -182,7 +182,7 @@ emit_symbol symbol --dot_duration/Duration [--on] [--off]:
 /**
 Emits the given string, using the $on and $off blocks.
 
-The string must only contain the characters of the latin alphabet or spaces.
+The string must only contain the characters of the Latin alphabet or spaces.
 The given $dot_duration is used as duration of $DOT.
 */
 emit_string str/string --dot_duration/Duration [--on] [--off]:
