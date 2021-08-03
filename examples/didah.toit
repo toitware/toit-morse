@@ -1,6 +1,6 @@
-// Copyright (C) 2021 Toitware ApS. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be found
-// in the LICENSE file.
+// Copyright (C) 2021 Toitware ApS.
+// Use of this source code is governed by a Zero-Clause BSD license that can
+// be found in the EXAMPLES_LICENSE file.
 
 /**
 This example demonstrates a simple conversion from strings to Morse code.
