@@ -5,7 +5,7 @@
 import morse
 import expect show *
 
-run_test dot_duration:
+run_test dot_duration [--too_slow]:
   actual := []
   start_time := Time.now
   morse.emit_string "he ll o"
@@ -66,23 +66,23 @@ run_test dot_duration:
     expect diff >= Duration.ZERO
 
     // We allow up to half a dot-duration of being too late.
-    // Don't use `expect` as it exits.
+    // Don't use `expect` as it exits the test.
     if not diff < (dot_duration / 2):
-      throw "Dot was too long"
+      too_slow.call
 
     last_time = this_time
 
 main:
   // We start with a duration that is quite aggressive.
   // The test might fail. If it does we increment the time.
-  dot_duration := Duration --ms=1
+  dot_duration := Duration --us=500
   10.repeat:
-    catch:
-      print "Running with $dot_duration"
-      run_test dot_duration
-      // If we reach here, then the test succeeded.
-      return
-    dot_duration *= 2
-    print "Increased the duration to $dot_duration"
+    print "Running with $dot_duration"
+    run_test dot_duration --too_slow=:
+      dot_duration *= 2
+      print "Increased the duration to $dot_duration"
+      continue.repeat
+    // If we reach here, then the test succeeded.
+    return
   // Final attempt.
-  run_test dot_duration
+  run_test dot_duration --too_slow=: throw "Timing not satisfied"
