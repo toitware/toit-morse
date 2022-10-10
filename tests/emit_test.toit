@@ -68,7 +68,7 @@ run_test dot_duration [--too_slow]:
     // We allow up to half a dot-duration of being too late.
     // Don't use `expect` as it exits the test.
     if not diff < (dot_duration / 2):
-      too_slow.call
+      too_slow.call expected_durations actual
 
     last_time = this_time
 
@@ -85,4 +85,11 @@ main:
     // If we reach here, then the test succeeded.
     return
   // Final attempt.
-  run_test dot_duration --too_slow=: throw "Timing not satisfied"
+  run_test dot_duration --too_slow=: | expected actual |
+    print "Expected: $expected"
+    print "Actual:   $actual"
+    diffs := []
+    for i := 1; i < actual.size; i++:
+      diffs.add (actual[i - 1][1].to actual[i][1]).in_ms
+    print "Actual diffs: $diffs"
+    throw "Timing not satisfied"
