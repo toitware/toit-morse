@@ -7,11 +7,11 @@ import expect show *
 
 run_test dot_duration [--too_slow]:
   actual := []
-  start_time := Time.now
+  start_time := Time.monotonic_us
   morse.emit_string "he ll o"
       --dot_duration=dot_duration
-      --on=:  actual.add [1, Time.now]
-      --off=: actual.add [0, Time.now]
+      --on=:  actual.add [1, Time.monotonic_us]
+      --off=: actual.add [0, Time.monotonic_us]
 
   // 'h': di-di-di-dit   (4)
   // 'e': dit            (1)
@@ -58,10 +58,10 @@ run_test dot_duration [--too_slow]:
     expect_equals expected_on_off this_on_off
     expected_on_off = this_on_off == 1 ? 0 : 1
 
-    this_time /Time := actual[i][1]
-    duration := last_time.to this_time
+    this_time /int := actual[i][1]
+    duration_us := this_time - last_time
     expected := expected_durations[i]
-    diff /Duration := duration - expected
+    diff /Duration := (Duration --us=duration_us) - expected
     // Should never trigger earlier.
     expect diff >= Duration.ZERO
 
