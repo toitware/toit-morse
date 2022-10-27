@@ -90,6 +90,6 @@ main:
     print "Actual:   $actual"
     diffs := []
     for i := 1; i < actual.size; i++:
-      diffs.add (actual[i - 1][1].to actual[i][1]).in_ms
+      diffs.add (actual[i][1] - actual[i - 1][1]) / 1000
     print "Actual diffs: $diffs"
     throw "Timing not satisfied"
