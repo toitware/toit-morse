@@ -60,14 +60,15 @@ run_test dot_duration [--too_slow]:
 
     this_time /int := actual[i][1]
     duration_us := this_time - last_time
-    expected := expected_durations[i]
-    diff /Duration := (Duration --us=duration_us) - expected
+    expected/Duration := expected_durations[i]
     // Should never trigger earlier.
-    expect diff >= Duration.ZERO
+    expect duration_us >= expected.in_us
 
-    // We allow up to half a dot-duration of being too late.
+    // We allow up to 25% or half a dot duration (whatever is more) of
+    // being too late.
     // Don't use `expect` as it exits the test.
-    if not diff < (dot_duration / 2):
+    allowed := max (expected.in_us * 1.25) (expected.in_us + dot_duration.in_us / 2)
+    if not duration_us < allowed:
       too_slow.call expected_durations actual
 
     last_time = this_time
