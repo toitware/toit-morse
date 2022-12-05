@@ -64,7 +64,7 @@ run_test dot_duration [--too_slow]:
     // Should never trigger earlier.
     expect duration_us >= expected.in_us
 
-    // We allow up to 2x the duration. Especially on Macos we can get very close
+    // We allow up to 2x the duration. Especially on macOS we can get very close
     // when the machine is busy.
     // Don't use `expect` as it exits the test.
     allowed := expected.in_us * 2
